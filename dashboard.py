@@ -2,24 +2,27 @@ import pandas as pd
 import streamlit as st
 
 # ==============================
-# 🟢 PAGE CONFIG + TITLE
+# PAGE CONFIG + TITLE
 # ==============================
-st.set_page_config(page_title="AI Lab Optimizer", layout="wide")
+st.set_page_config(
+    page_title="AI GPU Resource Optimizer",
+    layout="wide"
+)
 
-st.title("🤖 AI Lab Resource Optimizer")
-st.subheader("Smart Monitoring & Resource Allocation System")
+st.title("🤖 AI GPU Resource Optimizer")
+st.subheader("Smart GPU Monitoring & Resource Allocation System")
 
 # ==============================
-# 📂 LOAD DATA
+# LOAD DATA
 # ==============================
 df = pd.read_csv("lab_usage.csv")
 
 # ==============================
-# 🧠 STATUS CALCULATION
+# STATUS CALCULATION
 # ==============================
 status = []
 
-for usage in df["CPU_Usage"]:
+for usage in df["GPU_Usage"]:
     if usage > 80:
         status.append("Overloaded")
     elif usage < 30:
@@ -30,94 +33,119 @@ for usage in df["CPU_Usage"]:
 df["Status"] = status
 
 # ==============================
-# 📊 BASIC METRICS
+# BASIC METRICS
 # ==============================
 total_pcs = len(df)
 overloaded_count = len(df[df["Status"] == "Overloaded"])
 underutilized_count = len(df[df["Status"] == "Underutilized"])
-avg_usage = df["CPU_Usage"].mean()
+avg_usage = df["GPU_Usage"].mean()
 
 # ==============================
-# 📌 KPI DASHBOARD
+# KPI DASHBOARD
 # ==============================
+st.subheader("📌 System Overview")
+
 col1, col2, col3, col4 = st.columns(4)
 
-col1.metric("Total PCs", total_pcs)
-col2.metric("Overloaded", overloaded_count)
-col3.metric("Underutilized", underutilized_count)
-col4.metric("Avg CPU %", f"{avg_usage:.2f}%")
+col1.metric("Total Systems", total_pcs)
+col2.metric("Overloaded GPUs", overloaded_count)
+col3.metric("Underutilized GPUs", underutilized_count)
+col4.metric("Avg GPU Usage", f"{avg_usage:.2f}%")
 
 st.divider()
 
 # ==============================
-# 📊 DATA TABLE
+# FULL TABLE
 # ==============================
-st.subheader("📊 Full System Overview")
+st.subheader("📊 Full GPU Resource Overview")
 st.dataframe(df, use_container_width=True)
 
 # ==============================
-# 📈 CPU USAGE CHART (Streamlit built-in)
+# GPU USAGE CHART
 # ==============================
-st.subheader("📈 CPU Usage per PC")
-st.bar_chart(df.set_index("PC")["CPU_Usage"])
+st.subheader("📈 GPU Usage per System")
+st.bar_chart(df.set_index("PC")["GPU_Usage"])
 
 # ==============================
-# 📊 STATUS DISTRIBUTION
+# STATUS DISTRIBUTION
 # ==============================
-st.subheader("📊 System Status Distribution")
+st.subheader("📊 Status Distribution")
+
 status_counts = df["Status"].value_counts()
 st.bar_chart(status_counts)
 
 st.divider()
 
 # ==============================
-# 🚨 ALERT SYSTEM
+# ALERT SYSTEM
 # ==============================
 st.subheader("🚨 Live Alert System")
 
 if overloaded_count > 0:
-    st.error(f"⚠️ ALERT: {overloaded_count} PCs are overloaded!")
-    st.warning("Immediate workload redistribution recommended.")
+    st.error(
+        f"⚠️ ALERT: {overloaded_count} GPU-enabled systems are overloaded!"
+    )
+    st.warning(
+        "Immediate workload redistribution is recommended."
+    )
 else:
-    st.success("✅ System Stable: No critical overload detected.")
+    st.success(
+        "✅ System Stable: No critical overload detected."
+    )
 
 st.divider()
 
 # ==============================
-# 🧠 AI SMART RECOMMENDATION
+# SMART RECOMMENDATION ENGINE
 # ==============================
 st.subheader("🧠 AI Smart Recommendation Engine")
 
-best_pcs = df[df["Status"] == "Underutilized"].sort_values(by="CPU_Usage").head(3)
+best_pcs = (
+    df[df["Status"] == "Underutilized"]
+    .sort_values(by="GPU_Usage")
+    .head(3)
+)
 
 if not best_pcs.empty:
-    st.write("👉 Best PCs for new workload assignment:")
+    st.write(
+        "👉 Recommended systems for assigning new AI workloads:"
+    )
     st.dataframe(best_pcs, use_container_width=True)
 else:
-    st.info("No suitable idle PCs available.")
+    st.info(
+        "No underutilized systems are currently available."
+    )
 
 st.divider()
 
 # ==============================
-# 📊 EFFICIENCY SCORE
+# EFFICIENCY SCORE
 # ==============================
 st.subheader("📊 System Efficiency Score")
 
-imbalance = overloaded_count - underutilized_count
+imbalance = abs(
+    overloaded_count - underutilized_count
+)
 
-if imbalance > 5:
-    st.error("❌ Low Efficiency: High imbalance detected")
-elif imbalance > 0:
-    st.warning("⚠️ Moderate imbalance in system")
+if imbalance > 3:
+    st.error(
+        "❌ Low Efficiency: Significant resource imbalance detected."
+    )
+elif imbalance > 1:
+    st.warning(
+        "⚠️ Moderate Efficiency: Some imbalance exists."
+    )
 else:
-    st.success("✅ High Efficiency: Balanced system")
+    st.success(
+        "✅ High Efficiency: Resources are well balanced."
+    )
 
 st.divider()
 
 # ==============================
-# 🔍 FILTER SYSTEM
+# FILTER SYSTEM
 # ==============================
-st.subheader("🔍 Filter PCs by Status")
+st.subheader("🔍 Filter Systems by Status")
 
 selected_status = st.selectbox(
     "Select Status",
@@ -134,30 +162,63 @@ st.dataframe(filtered_df, use_container_width=True)
 st.divider()
 
 # ==============================
-# 🔎 SEARCH FEATURE
+# SEARCH SYSTEM
 # ==============================
-st.subheader("🔍 Search PC")
+st.subheader("🔎 Search System")
 
-pc_name = st.text_input("Enter PC Name (e.g., PC1)")
+pc_name = st.text_input(
+    "Enter System Name (Example: PC1)"
+)
 
 if pc_name:
-    result = df[df["PC"].str.lower() == pc_name.lower()]
+    result = df[
+        df["PC"].str.lower() == pc_name.lower()
+    ]
 
     if not result.empty:
         st.dataframe(result, use_container_width=True)
     else:
-        st.error("PC not found")
+        st.error("System not found.")
 
 st.divider()
 
 # ==============================
-# 🧠 AI PREDICTION ENGINE
+# AI PREDICTION ENGINE
 # ==============================
 st.subheader("🧠 AI Prediction Engine")
 
 if avg_usage > 75:
-    st.error("Prediction: High load expected in upcoming sessions.")
+    st.error(
+        "Prediction: High GPU demand expected for upcoming AI training workloads."
+    )
 elif avg_usage > 50:
-    st.warning("Prediction: Moderate load expected.")
+    st.warning(
+        "Prediction: Moderate GPU demand expected."
+    )
 else:
-    st.success("Prediction: System is stable for upcoming usage.")
+        st.success(
+        "Prediction: Current GPU resources appear sufficient for upcoming workloads."
+    )
+
+st.divider()
+
+# ==============================
+# FINAL SUMMARY
+# ==============================
+st.subheader("📋 Executive Summary")
+
+st.info(
+    f"""
+    Total Systems: {total_pcs}
+
+    Overloaded Systems: {overloaded_count}
+
+    Underutilized Systems: {underutilized_count}
+
+    Average GPU Utilization: {avg_usage:.2f}%
+
+    This prototype demonstrates intelligent GPU resource monitoring,
+    workload balancing, and optimization recommendations for
+    university AI laboratories.
+    """
+)

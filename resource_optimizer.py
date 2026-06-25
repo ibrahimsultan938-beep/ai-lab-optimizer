@@ -1,6 +1,6 @@
 import csv
 
-print("=== University Lab Resource Analysis ===\n")
+print("=== AI GPU Resource Analysis ===\n")
 
 underutilized = []
 overloaded = []
@@ -10,23 +10,29 @@ with open("lab_usage.csv", "r") as file:
 
     for row in reader:
         pc = row["PC"]
-        usage = int(row["CPU_Usage"])
+        usage = int(row["GPU_Usage"])
 
         if usage > 80:
-            print(f"{pc}: {usage}% -> Overloaded")
+            print(f"{pc}: GPU Usage {usage}% -> Overloaded")
             overloaded.append(pc)
 
         elif usage < 30:
-            print(f"{pc}: {usage}% -> Underutilized")
+            print(f"{pc}: GPU Usage {usage}% -> Underutilized")
             underutilized.append(pc)
 
         else:
-            print(f"{pc}: {usage}% -> Normal")
+            print(f"{pc}: GPU Usage {usage}% -> Normal")
 
-print("\n=== Recommendation ===")
+print("\n=== AI Resource Allocation Recommendation ===")
 
 if underutilized:
-    print("Assign new workloads to:", ", ".join(underutilized))
+    print("Recommended systems for new AI workloads:")
+    print(", ".join(underutilized))
 
 if overloaded:
-    print("Reduce workload from:", ", ".join(overloaded))
+    print("\nSystems requiring workload reduction:")
+    print(", ".join(overloaded))
+
+print("\n=== Summary ===")
+print(f"Overloaded Systems: {len(overloaded)}")
+print(f"Underutilized Systems: {len(underutilized)}")
